@@ -13,13 +13,13 @@
 
     <form action="ex23calc.php" method="POST">
         <label for="org">Money amount you invest:</label>
-        <input type="int" id="org" name="org" required>
+        <input type="text" id="org" name="org" required>
         <p>
         <label for="rate">Interest rate (use e.g. 7 to represent 7%):</label>
-        <input type="int" id="rate" name="rate" required>
+        <input type="text" id="rate" name="rate" required>
         <p>
         <label for="year">The number of years you want to keep the money on the account:</label>
-        <input type="int" id="year" name="year" required>
+        <input type="text" id="year" name="year" required>
         <p>
         <button type="submit"><strong>Send</button>
         <p>

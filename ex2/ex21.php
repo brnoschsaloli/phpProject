@@ -5,15 +5,15 @@
 </head>
 <body>
     <h1> Exercise 2.1 </h1>
-    <form action="POST_form.php" method="POST">
+    <form method="POST">
         <label for="org">Money amount you invest:</label>
         <input type="text" id="org" name="org" required>
 
         <label for="rate">Interest rate (use e.g. 7 to represent 7%):</label>
-        <input type="int" id="rate" name="rate" required>
+        <input type="text" id="rate" name="rate" required>
 
         <label for="years">The number of years you want to keep the money on the account:</label>
-        <input type="int" id="years" name="years" required>
+        <input type="text" id="years" name="years" required>
 
         <button type="submit">Send</button>
         <button type="reset">Start over</button>

@@ -13,10 +13,10 @@
 
     <form action="ex24calc.php" method="POST">
         <label for="org">Money amount you invest:</label>
-        <input type="int" id="org" name="org" required>
+        <input type="text" id="org" name="org" required>
         <p>
         <label for="rate">Interest rate (use e.g. 7 to represent 7%):</label>
-        <input type="int" id="rate" name="rate" required>
+        <input type="text" id="rate" name="rate" required>
         <p>
         <button type="submit"><strong>Send</button>
         <p>
