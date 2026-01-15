@@ -11,9 +11,9 @@
         $number = "404";
         $zip = "05657-030";
         $city = "São Paulo";
-        $name = "Breno Schneider";
-        $address1 = "Rua Trinta e Um de Março 404";
-        $address2 = "05657-030 São Paulo";
+        $name = $firstName . " " . $lastName;
+        $address1 = $street . " " . $number;
+        $address2 = $zip . " " . $city;
     ?>
     
     <h1> Exercise 1.3 </h1>

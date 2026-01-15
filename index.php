@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shiny PHP course page for YOUR NAME HERE</title>
     <style>
-        html { color-scheme: light dark; }
+        html {  }
         body { font-family: System UI, sans-serif; font-size: 1.25rem; line-height: 1.5; }
         img,
         svg,
@@ -35,7 +35,7 @@
                 $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
                 echo "<p style='color:green'>✓ Database connection successful!</p>";
             } catch (PDOException $e) {
-                echo "<p style='color:red'>✗ Connection failed. Update your credentials in index.php</p>";
+                echo "<p style='color:red'>$e</p>";
             }
         ?>
     </div>
@@ -57,6 +57,22 @@
             <li><a href="ex23calc.php">exercise 2.3 calculation</a></li>
             <li><a href="ex24form.php">exercise 2.4 form</a></li>
             <li><a href="ex24calc.php">exercise 2.4 calculation</a></li>
+        </ul>
+    </details>
+    <details>
+        <summary>Exercise 3</summary>
+        <ul>
+            <li><a href="ex31form.php">exercise 3.1 form</a></li>
+            <li><a href="ex31calc.php">exercise 3.1 calculation</a></li>
+            <li><a href="ex32.php">exercise 3.2</a></li>
+            <li><a href="ex33.php">exercise 3.3</a></li>
+            <li><a href="ex34.php">exercise 3.4</a></li>
+        </ul>
+    </details>
+    <details>
+        <summary>Exercise 4</summary>
+        <ul>
+            <li><a href="ex41.php">exercise 4.1</a></li>
         </ul>
     </details>
 </body>
