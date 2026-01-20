@@ -1,5 +1,7 @@
+<!-- this file is created by Breno Oliveira -->
 <?php
-// main.php
+
+require_once "auth.php";
 
 $dbUser = 'breno';
 $dbPassword = 'gator-zoe-PIONEER-cramped';
@@ -89,7 +91,7 @@ $selectedCats = array_values(array_filter(array_map('trim', $selectedCats)));
 
 $firstDayTimestamp = mktime(0, 0, 0, $month, 1, $year);
 $daysInMonth = (int) date('t', $firstDayTimestamp);     // number of days in month
-$firstWeekday = (int) date('N', $firstDayTimestamp);    // 1=Mon ... 7=Sun
+$firstWeekday = (int) date('w', $firstDayTimestamp);    // 0=Sun ... 6=Sat
 
 // Previous / next month links
 $prevMonth = $month - 1;
@@ -110,6 +112,24 @@ $monthName = date('F', $firstDayTimestamp);
 $todayY = (int) date('Y');
 $todayM = (int) date('n');
 $todayD = (int) date('j');
+
+$todayDate = sprintf('%04d-%02d-%02d', $todayY, $todayM, $todayD);
+
+$todayEvents = [];
+$stmtToday = $mydb->prepare("
+  SELECT event_id, event_name, `date`, date_time, category
+  FROM calendarTable
+  WHERE `date` = ?
+  ORDER BY date_time ASC
+");
+$stmtToday->bind_param("s", $todayDate);
+$stmtToday->execute();
+
+$resToday = $stmtToday->get_result();
+while ($r = $resToday->fetch_assoc()) {
+  $todayEvents[] = $r;
+}
+
 
 
 $start = sprintf('%04d-%02d-01', $year, $month);
@@ -171,68 +191,118 @@ if ($ok) {
   <meta charset="utf-8">
   <title>PHP Dynamic Calendar</title>
   <link rel="stylesheet" href="styles.css">
+
 </head>
+
+
 
 <body>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <form method="GET" class="filter-form">
-        <input type="hidden" name="m" value="<?= (int) $month ?>">
-        <input type="hidden" name="y" value="<?= (int) $year ?>">
-
-        <h3>Filters</h3>
-
-        <label for="q">Search</label>
-        <input id="q" type="text" name="q" value="<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"
-          placeholder="Event name...">
-
-        <div class="cats">
-          <div class="cats-title">Categories</div>
-
-          <?php foreach ($allCategories as $cat):
-            $checked = in_array($cat, $selectedCats, true);
-            ?>
-            <label class="cat-item">
-              <input type="checkbox" name="cat[]" value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>" <?= $checked ? 'checked' : '' ?>>
-              <span><?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?></span>
-            </label>
-          <?php endforeach; ?>
-        </div>
-
-        <button type="submit" class="btn">Apply</button>
-
-        <a class="btn secondary" href="main.php?m=<?= (int) $month ?>&y=<?= (int) $year ?>">Clear</a>
-      </form>
-    </aside>
-
-    <main class="content">
-      <div class="nav">
-        <a href="?m=<?= $prevMonth ?>&y=<?= $prevYear ?>&<?= $filterQuery ? '&' . $filterQuery : '' ?>">&larr; Prev</a>
-        <h2><?= htmlspecialchars($monthName) ?> <?= $year ?></h2>
-        <a href="?m=<?= $nextMonth ?>&y=<?= $nextYear ?>&<?= $filterQuery ? '&' . $filterQuery : '' ?>">Next &rarr;</a>
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-title">My Calendar</div>
       </div>
 
-      <a class="add-btn"
-        href="addEvent.php?m=<?= $month ?>&y=<?= $year ?>&<?= $filterQuery ? '&' . $filterQuery : '' ?>">+ Add event</a>
+      <div class="top-actions">
+        <?php if (is_logged_in()): ?>
+          <a class="btn secondary" href="owner.php">Owner</a>
+          <a class="btn" href="logout.php">Logout</a>
+        <?php else: ?>
+          <a class="btn" href="login.php">Owner login</a>
+        <?php endif; ?>
+      </div>
+    </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th>Sun</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
+    <div class="layout">
+      <aside class="sidebar">
+        <form method="GET" class="filter-form">
+          <input type="hidden" name="m" value="<?= (int) $month ?>">
+          <input type="hidden" name="y" value="<?= (int) $year ?>">
+
+          <h3>Filters</h3>
+
+          <label for="q">Search</label>
+          <input id="q" type="text" name="q" value="<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"
+            placeholder="Event name...">
+
+          <div class="cats">
+            <div class="cats-title">Categories</div>
+
+            <?php foreach ($allCategories as $cat):
+
+              $checked = in_array($cat, $selectedCats, true);
+              ?>
+              <label class="cat-item">
+                <input type="checkbox" name="cat[]" value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>" <?= $checked ? 'checked' : '' ?>>
+                <span><?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?></span>
+              </label>
+            <?php endforeach; ?>
+          </div>
+
+          <button type="submit" class="btn">Apply</button>
+
+          <a class="btn secondary" href="main.php?m=<?= (int) $month ?>&y=<?= (int) $year ?>">Clear</a>
+        </form>
+
+        <div class="todays">
+          <div class="todays-title">Today (<?= htmlspecialchars($todayDate) ?>)</div>
+
+          <?php if (empty($todayEvents)): ?>
+            <div class="todays-empty">No events today.</div>
+          <?php else: ?>
+            <ul class="todays-list">
+              <?php foreach ($todayEvents as $ev):
+                $id = (int) $ev['event_id'];
+                $time = $ev['date_time'] ? substr($ev['date_time'], 0, 5) : '';
+                $link = "event.php?id=$id&m=" . urlencode($month) . "&y=" . urlencode($year);
+                ?>
+                <li class="todays-item">
+                  <a class="todays-link" href="<?= $link ?>">
+                    <?php if ($time !== ''): ?>
+                      <span class="todays-time"><?= htmlspecialchars($time) ?></span>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($ev['event_name'], ENT_QUOTES, 'UTF-8') ?>
+                  </a>
+                  <div class="todays-meta"><?= htmlspecialchars($ev['category'], ENT_QUOTES, 'UTF-8') ?></div>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php endif; ?>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="nav">
+          <a href="?m=<?= $prevMonth ?>&y=<?= $prevYear ?>&<?= $filterQuery ? '&' . $filterQuery : '' ?>">&larr;
+            Prev</a>
+          <h2><?= htmlspecialchars($monthName) ?> <?= $year ?></h2>
+          <a href="?m=<?= $nextMonth ?>&y=<?= $nextYear ?>&<?= $filterQuery ? '&' . $filterQuery : '' ?>">Next
+            &rarr;</a>
+        </div>
+
+        <?php if (is_logged_in()): ?>
+          <a class="add-btn" href="addEvent.php?m=<?= $month ?>&y=<?= $year ?>">+ Add event</a>
+        <?php endif; ?>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tue</th>
+              <th>Wed</th>
+              <th>Thu</th>
+              <th>Fri</th>
+              <th>Sat</th>
+            </tr>
+          </thead>
+          <tbody>
             <?php
+
+            echo "<tr>";
             // Print leading empty cells
-            for ($i = 1; $i < $firstWeekday; $i++) {
+            for ($i = 0; $i < $firstWeekday; $i++) {
               print '<td class="empty"></td>';
             }
 
@@ -242,7 +312,10 @@ if ($ok) {
               $isToday = ($year === $todayY && $month === $todayM && $day === $todayD);
               $cls = $isToday ? 'today' : ''; // cls = 'today' if isToday == 1 or '' if isToday == 0
             
-              print "<td class=\"$cls\"><div class='daynum'>$day</div>";
+              $isWeekend = ($weekday == 6 || $weekday == 0);
+              $weekendClass = $isWeekend ? 'weekend' : '';
+
+              print "<td class=\"$cls $weekendClass\"><div class='daynum'>$day</div>";
 
               //print events
               if (!empty($eventsByDay[$day])) {
@@ -271,25 +344,27 @@ if ($ok) {
 
               echo "</td>";
 
-              if ($weekday === 7 && $day !== $daysInMonth) {
+              if ($weekday === 6 && $day !== $daysInMonth) {
                 print "</tr><tr>";
-                $weekday = 1;
+                $weekday = 0;
               } else {
-                $weekday++;
+                $weekday = ($weekday + 1) % 7;
               }
             }
 
             // Print trailing empty cells
-            if ($weekday !== 1) {
-              for ($i = $weekday; $i <= 7; $i++) {
+            if ($weekday !== 0) {
+              for ($i = $weekday; $i <= 6; $i++) {
                 print '<td class="empty"></td>';
               }
             }
+
+            echo "</tr>";
             ?>
-          </tr>
-        </tbody>
-      </table>
-    </main>
+          </tbody>
+        </table>
+      </main>
+    </div>
   </div>
 
 

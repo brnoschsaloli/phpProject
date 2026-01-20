@@ -1,4 +1,8 @@
+<!-- this file is created by Breno Oliveira -->
 <?php
+
+require_once "auth.php";
+
 $dbUser = 'breno';
 $dbPassword = 'gator-zoe-PIONEER-cramped';
 $database = $dbUser . "_db";
@@ -194,77 +198,80 @@ if (!$event) {
 </head>
 
 <body>
-    <div class="wrap">
-        <a href="<?= htmlspecialchars($back, ENT_QUOTES, 'UTF-8') ?>">← Back to calendar</a>
 
-        <?php if (!$edit): ?>
-            <h2><?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?></h2>
+    <div class="page">
+        <div class="wrap">
+            <a href="<?= htmlspecialchars($back, ENT_QUOTES, 'UTF-8') ?>">← Back to calendar</a>
 
-            <div class="card">
-                <div class="row"><span class="label">Date:</span>
-                    <?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?></div>
-                <div class="row"><span class="label">Time:</span>
-                    <?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : "—" ?>
-                </div>
-                <div class="row"><span class="label">Category:</span>
-                    <?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?></div>
-                <div class="row">
-                    <span class="label">Description:</span>
-                    <div class="desc">
-                        <?= $event['description'] ? makeClickableLinks($event['description']) : "—" ?>
+            <?php if (!$edit): ?>
+                <h2><?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?></h2>
+
+                <div class="card">
+                    <div class="row"><span class="label">Date:</span>
+                        <?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?></div>
+                    <div class="row"><span class="label">Time:</span>
+                        <?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : "—" ?>
+                    </div>
+                    <div class="row"><span class="label">Category:</span>
+                        <?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?></div>
+                    <div class="row">
+                        <span class="label">Description:</span>
+                        <div class="desc">
+                            <?= $event['description'] ? makeClickableLinks($event['description']) : "—" ?>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <?php if (is_logged_in()): ?>
+                            <a class="btn secondary"
+                                href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>&edit=1">Update</a>
+                            <form method="POST" style="margin:0;">
+                                <input type="hidden" name="id" value="<?= (int) $id ?>">
+                                <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
+                                <button class="btn danger" type="submit" name="delete" value="1">Delete</button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <div class="actions">
-                    <a class="btn secondary"
-                        href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>&edit=1">Update</a>
+            <?php else: ?>
+                <h2>Update event</h2>
 
-                    <form method="POST" style="margin:0;">
-                        <input type="hidden" name="id" value="<?= (int) $id ?>">
-                        <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
-                        <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
-                        <button class="btn danger" type="submit" name="delete" value="1">Delete</button>
-                    </form>
-                </div>
-            </div>
+                <?php if (!empty($errorMsg)): ?>
+                    <p style="color:#b00020;"><?= htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8') ?></p>
+                <?php endif; ?>
 
-        <?php else: ?>
-            <h2>Update event</h2>
+                <form method="POST" class="card">
+                    <input type="hidden" name="id" value="<?= (int) $id ?>">
+                    <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
+                    <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
 
-            <?php if (!empty($errorMsg)): ?>
-                <p style="color:#b00020;"><?= htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8') ?></p>
-            <?php endif; ?>
+                    <div class="row">
+                        <label class="label" for="event_name">Name:</label><br>
+                        <input id="event_name" name="event_name"
+                            value="<?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?>" required>
+                    </div>
 
-            <form method="POST" class="card">
-                <input type="hidden" name="id" value="<?= (int) $id ?>">
-                <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
-                <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
+                    <div class="row">
+                        <label class="label" for="date">Date:</label><br>
+                        <input id="date" type="date" name="date"
+                            value="<?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?>" required>
+                    </div>
 
-                <div class="row">
-                    <label class="label" for="event_name">Name:</label><br>
-                    <input id="event_name" name="event_name"
-                        value="<?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?>" required>
-                </div>
+                    <div class="row">
+                        <label class="label" for="date_time">Time:</label><br>
+                        <input id="date_time" type="time" name="date_time"
+                            value="<?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : '' ?>">
+                    </div>
 
-                <div class="row">
-                    <label class="label" for="date">Date:</label><br>
-                    <input id="date" type="date" name="date"
-                        value="<?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?>" required>
-                </div>
+                    <div class="row">
+                        <label class="label" for="category">Category:</label><br>
+                        <input id="category" name="category"
+                            value="<?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?>" required>
+                    </div>
 
-                <div class="row">
-                    <label class="label" for="date_time">Time:</label><br>
-                    <input id="date_time" type="time" name="date_time"
-                        value="<?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : '' ?>">
-                </div>
-
-                <div class="row">
-                    <label class="label" for="category">Category:</label><br>
-                    <input id="category" name="category"
-                        value="<?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?>" required>
-                </div>
-
-                <!-- <label for="category">Category</label><br>
+                    <!-- <label for="category">Category</label><br>
                 <input type="text" id="category" name="category" list="categoryList" required placeholder="Start typing..."
                     style="width:100%;">
 
@@ -275,19 +282,20 @@ if (!$event) {
                 </datalist>
                 <br><br> -->
 
-                <div class="row">
-                    <label class="label" for="description">Description:</label><br>
-                    <textarea id="description" name="description"
-                        rows="4"><?= htmlspecialchars($event['description'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
-                </div>
+                    <div class="row">
+                        <label class="label" for="description">Description:</label><br>
+                        <textarea id="description" name="description"
+                            rows="4"><?= htmlspecialchars($event['description'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                    </div>
 
-                <div class="actions">
-                    <button class="btn" type="submit" name="update" value="1">Save</button>
-                    <a class="btn secondary"
-                        href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>">Cancel</a>
-                </div>
-            </form>
-        <?php endif; ?>
+                    <div class="actions">
+                        <button class="btn" type="submit" name="update" value="1">Save</button>
+                        <a class="btn secondary"
+                            href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>">Cancel</a>
+                    </div>
+                </form>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 

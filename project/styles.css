@@ -1,13 +1,25 @@
+/* this file is created by Breno Oliveira */
 body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
   font-family: Arial, sans-serif;
+}
+
+.page {
+  width: 100%;
+  max-width: 992px;
+  /* perfect for your layout */
   padding: 20px;
 }
+
 
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 520px;
+  max-width: 700px;
 }
 
 .nav a {
@@ -22,20 +34,42 @@ body {
   margin: 0;
 }
 
+.owner-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-nav a {
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  color: #111;
+}
+
+.owner-nav h2 {
+  margin: 0;
+}
+
 table {
   border-collapse: collapse;
-  width: 520px;
+  width: 700px;
   margin-top: 12px;
+  table-layout: fixed;
 }
 
 th,
 td {
   border: 1px solid #ddd;
-  width: calc(520px / 7);
-  height: 70px;
+  width: calc(700px / 7);
+  height: 100px;
   vertical-align: top;
-  padding: 8px;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
+
 
 th {
   background: #f4f4f4;
@@ -59,7 +93,11 @@ td.today {
   margin: 6px 0 0;
   padding-left: 0;
   list-style: none;
+
+  max-height: 70px;
+  overflow-y: auto;
 }
+
 
 .event-item {
   font-size: 12px;
@@ -81,6 +119,16 @@ td.today {
 .event-item.personal {
   background: #fff0f0;
   color: #7a1f1f;
+}
+
+.event-item.study {
+  background: #efe7f6;
+  color: #5a145a;
+}
+
+.event-item.flamengo {
+  background: #1d1d1d;
+  color: #ff6363;
 }
 
 .event-time {
@@ -132,8 +180,7 @@ a:hover {
 }
 
 .content {
-  width: 520px;
-  /* matches your calendar width */
+  width: 700px;
 }
 
 .filter-form h3 {
@@ -194,4 +241,92 @@ a:hover {
   background: transparent;
   color: #111;
   border-color: #ccc;
+}
+
+.todays {
+  margin-top: 14px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.todays-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.todays-empty {
+  color: #666;
+  font-size: 14px;
+}
+
+.todays-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.todays-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.todays-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.todays-link:hover {
+  text-decoration: underline;
+}
+
+.todays-time {
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.todays-meta {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  /* max-width: 993px; */
+  margin-bottom: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-img {
+  width: 120px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+td.weekend {
+  background-color: #f7fcff;
+}
+
+td.weekend.today {
+  outline: 2px solid #333;
+  background-color: #c5e9fd;
 }

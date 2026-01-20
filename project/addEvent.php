@@ -1,4 +1,8 @@
+<!-- this file is created by Breno Oliveira -->
 <?php
+
+require_once "auth.php";
+
 $dbUser = 'breno';
 $dbPassword = 'gator-zoe-PIONEER-cramped';
 $database = $dbUser . "_db";
@@ -76,43 +80,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-    <h2>Add event</h2>
+    <div class="page">
 
-    <form method="POST" action="addEvent.php" style="max-width:520px;">
+        <h2>Add event</h2>
 
-        <input type="hidden" name="m" value="<?= $_GET['m'] ?? '' ?>">
-        <input type="hidden" name="y" value="<?= $_GET['y'] ?? '' ?>">
+        <form method="POST" action="addEvent.php" style="max-width:520px;">
 
-        <label>Date</label><br>
-        <input type="date" name="date" required><br><br>
+            <input type="hidden" name="m" value="<?= $_GET['m'] ?? '' ?>">
+            <input type="hidden" name="y" value="<?= $_GET['y'] ?? '' ?>">
 
-        <label>Time (optional)</label><br>
-        <input type="time" name="date_time"><br><br>
+            <label>Date</label><br>
+            <input type="date" name="date" style="width:50%;" required><br><br>
 
-        <label>Event name</label><br>
-        <input type="text" name="event_name" required><br><br>
+            <label>Time (optional)</label><br>
+            <input type="time" name="date_time" style="width:50%;"><br><br>
 
-        <label for="category">Category</label><br>
-        <input type="text" id="category" name="category" list="categoryList" required placeholder="Start typing..."
-            style="width:100%;">
+            <label>Event name</label><br>
+            <input type="text" name="event_name" style="width:50%;" required><br><br>
 
-        <datalist id="categoryList">
-            <?php foreach ($categories as $cat): ?>
-                <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
-            <?php endforeach; ?>
-        </datalist>
-        <br><br>
+            <label for="category">Category</label><br>
+            <input type="text" id="category" name="category" list="categoryList" required placeholder="Start typing..."
+                style="width:50%;">
+
+            <datalist id="categoryList">
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
+                <?php endforeach; ?>
+            </datalist>
+            <br><br>
 
 
 
-        <label>Description</label><br>
-        <textarea name="description"></textarea><br><br>
+            <label>Description</label><br>
+            <textarea name="description" style="width:50%;"></textarea><br><br>
 
-        <button type="submit">Save</button>
+            <button type="submit">Save</button>
 
-    </form>
+        </form>
 
-    <a href="main.php?m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>">← Back to calendar</a>
+        <p></p>
+
+        <a href="main.php?m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>">← Back to calendar</a>
+
+    </div>
 
 </body>
 

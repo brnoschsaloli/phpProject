@@ -1,20 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shiny PHP course page for YOUR NAME HERE</title>
     <style>
-        html {  }
-        body { font-family: System UI, sans-serif; font-size: 1.25rem; line-height: 1.5; }
+        html {}
+
+        body {
+            font-family: System UI, sans-serif;
+            font-size: 1.25rem;
+            line-height: 1.5;
+        }
+
         img,
         svg,
-        video { max-width: 100%; display: block; }
-        main { max-width: min(70ch, 100% - 4 rem); margin-inline: auto; }
-        h1 { color: #333; }
-        .info { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        video {
+            max-width: 100%;
+            display: block;
+        }
+
+        main {
+            max-width: min(70ch, 100% - 4 rem);
+            margin-inline: auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+        }
     </style>
 </head>
+
 <body>
     <h1>Welcome to the personal course page of Breno Schneider</h1>
     <div class="info">
@@ -25,18 +48,18 @@
     <h2>Database Connection Test</h2>
     <div class="info">
         <?php
-            // Update with your credentials
-            $host = 'localhost';
-            $dbname = get_current_user() . '_db';
-            $user = get_current_user();
-            $pass = 'gator-zoe-PIONEER-cramped';
-            
-            try {
-                $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-                echo "<p style='color:green'>✓ Database connection successful!</p>";
-            } catch (PDOException $e) {
-                echo "<p style='color:red'>$e</p>";
-            }
+        // Update with your credentials
+        $host = 'localhost';
+        $dbname = get_current_user() . '_db';
+        $user = get_current_user();
+        $pass = 'gator-zoe-PIONEER-cramped';
+
+        try {
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+            echo "<p style='color:green'>✓ Database connection successful!</p>";
+        } catch (PDOException $e) {
+            echo "<p style='color:red'>$e</p>";
+        }
         ?>
     </div>
     <p>
@@ -89,5 +112,5 @@
         </ul>
     </details>
 </body>
-</html>
 
+</html>
