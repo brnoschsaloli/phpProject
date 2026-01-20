@@ -8,4 +8,4 @@
     <p>Lets's get cracking!</p>
     <p>Today's date is: <?php echo date("F j, Y") ?> </p>
 </body>
-</html> 
+</html>  

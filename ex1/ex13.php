@@ -15,7 +15,7 @@
         $address1 = $street . " " . $number;
         $address2 = $zip . " " . $city;
     ?>
-    
+     
     <h1> Exercise 1.3 </h1>
     
     <?php 

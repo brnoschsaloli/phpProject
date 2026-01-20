@@ -27,7 +27,7 @@
                 }
                 else{
                     $color = $res;
-                }
+                } 
                 print "<td style='color: #ffffff;background-color:#$color" . "00$color; text-align: center; vertical-align: middle;padding:5px;'>";
                 print "<strong>$res";
                 print "</td>";

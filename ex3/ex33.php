@@ -20,7 +20,7 @@
             "ao vivo" => 500,
             
             "dos predio" => 200,
-            
+             
             "porque elas preferem os canalhas" => 300,
                 
             "evom" => 50,

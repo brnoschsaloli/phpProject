@@ -43,36 +43,49 @@
     <details>
         <summary>Exercise 1</summary>
         <ul>
-            <li><a href="ex11.php">exercise 1.1</a></li>
-            <li><a href="ex12.php">exercise 1.2</a></li>
-            <li><a href="ex13.php">exercise 1.3</a></li>
+            <li><a href="ex1/ex11.php">exercise 1.1</a></li>
+            <li><a href="ex1/ex12.php">exercise 1.2</a></li>
+            <li><a href="ex1/ex13.php">exercise 1.3</a></li>
         </ul>
     </details>
     <details>
         <summary>Exercise 2</summary>
         <ul>
-            <li><a href="ex21.php">exercise 2.1</a></li>
-            <li><a href="ex22.php">exercise 2.2</a></li>
-            <li><a href="ex23form.php">exercise 2.3 form</a></li>
-            <li><a href="ex23calc.php">exercise 2.3 calculation</a></li>
-            <li><a href="ex24form.php">exercise 2.4 form</a></li>
-            <li><a href="ex24calc.php">exercise 2.4 calculation</a></li>
+            <li><a href="ex2/ex21.php">exercise 2.1</a></li>
+            <li><a href="ex2/ex22.php">exercise 2.2</a></li>
+            <li><a href="ex2/ex23form.php">exercise 2.3 form</a></li>
+            <li><a href="ex2/ex23calc.php">exercise 2.3 calculation</a></li>
+            <li><a href="ex2/ex24form.php">exercise 2.4 form</a></li>
+            <li><a href="ex2/ex24calc.php">exercise 2.4 calculation</a></li>
         </ul>
     </details>
     <details>
         <summary>Exercise 3</summary>
         <ul>
-            <li><a href="ex31form.php">exercise 3.1 form</a></li>
-            <li><a href="ex31calc.php">exercise 3.1 calculation</a></li>
-            <li><a href="ex32.php">exercise 3.2</a></li>
-            <li><a href="ex33.php">exercise 3.3</a></li>
-            <li><a href="ex34.php">exercise 3.4</a></li>
+            <li><a href="ex3/ex31form.php">exercise 3.1 form</a></li>
+            <li><a href="ex3/ex31calc.php">exercise 3.1 calculation</a></li>
+            <li><a href="ex3/ex32.php">exercise 3.2</a></li>
+            <li><a href="ex3/ex33.php">exercise 3.3</a></li>
+            <li><a href="ex3/ex34.php">exercise 3.4</a></li>
         </ul>
     </details>
     <details>
         <summary>Exercise 4</summary>
         <ul>
-            <li><a href="ex41.php">exercise 4.1</a></li>
+            <li><a href="ex4/ex41.php">exercise 4.1</a></li>
+            <li><a href="ex4/ex42.php">exercise 4.2</a></li>
+        </ul>
+    </details>
+    <details>
+        <summary>Exercise 5</summary>
+        <ul>
+            <li><a href="ex5/ex51main.php">exercise 5.1</a></li>
+        </ul>
+    </details>
+    <details>
+        <summary>Project</summary>
+        <ul>
+            <li><a href="project/main.php">main page</a></li>
         </ul>
     </details>
 </body>

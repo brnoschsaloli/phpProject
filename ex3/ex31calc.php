@@ -54,7 +54,7 @@
                     </td>
                 </tr>";
         print "<tr class='$class'>
-                    <td>
+                    <td> 
                         <strong>$displayDiscount% discount:
                     </td>
                     <td>

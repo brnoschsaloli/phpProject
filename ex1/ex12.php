@@ -4,11 +4,11 @@
     <title>Our first example</title>
 </head>
 <body>
-    <?php $courseCode = "EBS2040"?>
+    <?php $courseCode = "EBS2040"?> 
     <?php $firstLine = "Welcome to Build Your Own Dynamic Website ($courseCode)!"?>
     <?php $secondLine = "Let's get cracking!"?>
     <?php $date = date("F j, Y")?>
-
+ 
     <h1> <?php echo $firstLine ?> </h1>
     <p> <?php echo $secondLine ?> </p>
     <p>Today's date is: <?php echo $date ?> </p>

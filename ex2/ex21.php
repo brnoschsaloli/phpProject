@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1> Exercise 2.1 </h1>
-    <form method="POST">
+    <form method="POST"> 
         <label for="org">Money amount you invest:</label>
         <input type="text" id="org" name="org" required>
 

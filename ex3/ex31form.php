@@ -17,7 +17,7 @@
         <button type="submit"><strong>Send</button>
         <p>
         <button type="reset"><strong>Start over</button>
-    </form>
+    </form> 
     
     
 </body>
