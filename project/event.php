@@ -1,0 +1,294 @@
+<?php
+$dbUser = 'breno';
+$dbPassword = 'gator-zoe-PIONEER-cramped';
+$database = $dbUser . "_db";
+$mydb = mysqli_connect('localhost', $dbUser, $dbPassword, $database) or die("DB error");
+
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$m = $_GET['m'] ?? '';
+$y = $_GET['y'] ?? '';
+$edit = isset($_GET['edit']) && $_GET['edit'] == '1';
+
+if ($id <= 0) {
+    die("Invalid event id.");
+}
+
+$back = "main.php";
+if ($m !== '' && $y !== '') {
+    $back .= "?m=" . urlencode($m) . "&y=" . urlencode($y);
+}
+
+$categories = [];
+//category not equal ''
+$catRes = $mydb->query("
+    SELECT DISTINCT category 
+    FROM calendarTable 
+    WHERE category IS NOT NULL AND category <> '' 
+    ORDER BY category ASC
+");
+if ($catRes) {
+    while ($c = $catRes->fetch_assoc()) {
+        $categories[] = $c['category'];
+    }
+}
+
+
+/* ---------------------------
+        USEFUL FUNCTIONS
+--------------------------- */
+function makeClickableLinks($text)
+{
+    // escape HTML first
+    $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
+    // convert URLs into clickable links
+    $pattern = '/(https?:\/\/[^\s<]+)/i'; //regex to identify urls
+
+    return preg_replace(
+        $pattern,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+        $text
+    );
+}
+
+
+/* ---------------------------
+        DELETE (POST)
+--------------------------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
+    $stmt = $mydb->prepare("DELETE FROM calendarTable WHERE event_id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    header("Location: $back");
+    exit;
+}
+
+/* ---------------------------
+        UPDATE (POST)
+--------------------------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+
+    $event_name = trim($_POST['event_name'] ?? '');
+    $date = $_POST['date'] ?? '';
+    $date_time = $_POST['date_time'] ?? '';
+    $category = trim($_POST['category'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+
+    if (
+        $event_name !== '' &&
+        $category !== '' &&
+        preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)
+    ) {
+        $timeOrNull = ($date_time === '') ? null : $date_time;
+        $descOrNull = ($description === '') ? null : $description;
+
+        $stmt = $mydb->prepare("
+            UPDATE calendarTable
+            SET event_name=?, `date`=?, date_time=?, category=?, description=?
+            WHERE event_id=?
+        ");
+        $stmt->bind_param("sssssi", $event_name, $date, $timeOrNull, $category, $descOrNull, $id);
+        $stmt->execute();
+
+        // back to view mode after saving
+        $self = "event.php?id=$id&m=" . urlencode($m) . "&y=" . urlencode($y);
+        header("Location: $self");
+        exit;
+    } else {
+        $errorMsg = "Please fill Event name, Category, and a valid Date.";
+        $edit = true; // stay in edit mode to show error
+    }
+}
+
+/* ---------------------------
+        LOAD EVENT (GET)
+--------------------------- */
+$stmt = $mydb->prepare("
+    SELECT event_id, event_name, `date`, date_time, category, description
+    FROM calendarTable
+    WHERE event_id = ?
+");
+$stmt->bind_param("i", $id); // int
+$stmt->execute();
+
+$result = $stmt->get_result();
+$event = $result->fetch_assoc();
+
+if (!$event) {
+    die("Event not found.");
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .wrap {
+            max-width: 520px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .row {
+            margin: 8px 0;
+        }
+
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 110px;
+        }
+
+        .desc {
+            white-space: pre-wrap;
+            margin-top: 6px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #111;
+            background: #111;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn.secondary {
+            background: transparent;
+            color: #111;
+            border-color: #ccc;
+        }
+
+        .btn.danger {
+            background: #b00020;
+            border-color: #b00020;
+        }
+
+        input,
+        textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <a href="<?= htmlspecialchars($back, ENT_QUOTES, 'UTF-8') ?>">← Back to calendar</a>
+
+        <?php if (!$edit): ?>
+            <h2><?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?></h2>
+
+            <div class="card">
+                <div class="row"><span class="label">Date:</span>
+                    <?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?></div>
+                <div class="row"><span class="label">Time:</span>
+                    <?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : "—" ?>
+                </div>
+                <div class="row"><span class="label">Category:</span>
+                    <?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?></div>
+                <div class="row">
+                    <span class="label">Description:</span>
+                    <div class="desc">
+                        <?= $event['description'] ? makeClickableLinks($event['description']) : "—" ?>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a class="btn secondary"
+                        href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>&edit=1">Update</a>
+
+                    <form method="POST" style="margin:0;">
+                        <input type="hidden" name="id" value="<?= (int) $id ?>">
+                        <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
+                        <button class="btn danger" type="submit" name="delete" value="1">Delete</button>
+                    </form>
+                </div>
+            </div>
+
+        <?php else: ?>
+            <h2>Update event</h2>
+
+            <?php if (!empty($errorMsg)): ?>
+                <p style="color:#b00020;"><?= htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8') ?></p>
+            <?php endif; ?>
+
+            <form method="POST" class="card">
+                <input type="hidden" name="id" value="<?= (int) $id ?>">
+                <input type="hidden" name="m" value="<?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="y" value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>">
+
+                <div class="row">
+                    <label class="label" for="event_name">Name:</label><br>
+                    <input id="event_name" name="event_name"
+                        value="<?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?>" required>
+                </div>
+
+                <div class="row">
+                    <label class="label" for="date">Date:</label><br>
+                    <input id="date" type="date" name="date"
+                        value="<?= htmlspecialchars($event['date'], ENT_QUOTES, 'UTF-8') ?>" required>
+                </div>
+
+                <div class="row">
+                    <label class="label" for="date_time">Time:</label><br>
+                    <input id="date_time" type="time" name="date_time"
+                        value="<?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : '' ?>">
+                </div>
+
+                <div class="row">
+                    <label class="label" for="category">Category:</label><br>
+                    <input id="category" name="category"
+                        value="<?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?>" required>
+                </div>
+
+                <!-- <label for="category">Category</label><br>
+                <input type="text" id="category" name="category" list="categoryList" required placeholder="Start typing..."
+                    style="width:100%;">
+
+                <datalist id="categoryList">
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
+                    <?php endforeach; ?>
+                </datalist>
+                <br><br> -->
+
+                <div class="row">
+                    <label class="label" for="description">Description:</label><br>
+                    <textarea id="description" name="description"
+                        rows="4"><?= htmlspecialchars($event['description'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="submit" name="update" value="1">Save</button>
+                    <a class="btn secondary"
+                        href="event.php?id=<?= (int) $id ?>&m=<?= urlencode($m) ?>&y=<?= urlencode($y) ?>">Cancel</a>
+                </div>
+            </form>
+        <?php endif; ?>
+    </div>
+</body>
+
+</html>
