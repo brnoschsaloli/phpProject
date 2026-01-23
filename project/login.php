@@ -41,22 +41,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <h2>Owner login</h2>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
-    <?php endif; ?>
+    <div class="page">
+        <h2>Owner login</h2>
 
-    <form method="POST" style="max-width:360px;">
-        <label>Username</label><br>
-        <input type="text" name="username" required style="width:100%;"><br><br>
+        <?php if ($error): ?>
+            <p style="color:red;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
 
-        <label>Password</label><br>
-        <input type="password" name="password" required style="width:100%;"><br><br>
+        <form method="POST" style="max-width:360px;">
+            <label>Username</label><br>
+            <input type="text" name="username" required style="width:100%;"><br><br>
 
-        <button class="btn" type="submit">Login</button>
-        <a class="btn secondary" href="main.php">Cancel</a>
-    </form>
+            <label>Password</label><br>
+            <input type="password" name="password" required style="width:100%;"><br><br>
+
+            <button class="btn" type="submit">Login</button>
+            <a class="btn secondary" href="main.php">Cancel</a>
+        </form>
+    </div>
 </body>
 
 </html>

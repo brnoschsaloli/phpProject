@@ -1,22 +1,32 @@
 <!-- this file is created by Breno Oliveira -->
 <?php
 
-require_once "auth.php";
+require_once "auth.php"; // User login check    
 
+
+/* ---------------------------
+        DB CONNECTION
+--------------------------- */
 $dbUser = 'breno';
 $dbPassword = 'gator-zoe-PIONEER-cramped';
 $database = $dbUser . "_db";
 $mydb = mysqli_connect('localhost', $dbUser, $dbPassword, $database)
     or die("DB error");
 
+
+
+/* ------------------------------
+    GET CATEGORIES FOR SELECT
+----------------------------- */
 $categories = [];
-//category not equal ''
 $catRes = $mydb->query("
     SELECT DISTINCT category 
     FROM calendarTable 
     WHERE category IS NOT NULL AND category <> '' 
     ORDER BY category ASC
-");
+");                              //not equal == <>
+
+
 if ($catRes) {
     while ($c = $catRes->fetch_assoc()) {
         $categories[] = $c['category'];
@@ -24,9 +34,17 @@ if ($catRes) {
 }
 
 
+/* ------------------------------
+    GET MONTH AND YEAR FROM URL
+-------------------------------- */
 $m = $_GET['m'] ?? '';
 $y = $_GET['y'] ?? '';
 
+
+
+/* ------------------------------
+    ADD EVENT AFTER POST FORM
+-------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $event_name = trim($_POST['event_name'] ?? '');
@@ -40,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (
         $event_name !== '' &&
         $category !== '' &&
-        preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)
+        preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) //regex to identify dates
     ) {
 
-        $timeOrNull = ($date_time === '') ? null : $date_time;
+        $timeOrNull = ($date_time === '') ? null : $date_time; // check if datetime is not defined and define as NULL if it is
         $descOrNull = ($description === '') ? null : $description;
 
         $stmt = $mydb->prepare(
@@ -64,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
     }
 
-    header("Location: main.php?m=" . urlencode($m) . "&y=" . urlencode($y));
+    header("Location: main.php?m=" . urlencode($m) . "&y=" . urlencode($y)); // redirect to main.php
     exit;
 }
 ?>

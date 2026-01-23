@@ -22,24 +22,26 @@ $owner = $stmt->get_result()->fetch_assoc();
 </head>
 
 <body>
-    <div class="owner-nav">
-        <a href="main.php">← Back</a>
-        <h2>Owner</h2>
-        <a href="logout.php">Logout</a>
-    </div>
+    <div class="page">
+        <div class="owner-nav">
+            <a href="main.php">← Back</a>
+            <h2>Owner</h2>
+            <a href="logout.php">Logout</a>
+        </div>
 
-    <p></p>
+        <p></p>
 
-    <div class="sidebar" style="max-width:520px;">
-        <p><b>Name:</b>
-            <?= htmlspecialchars($owner['display_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-        </p>
-        <p><b>Username:</b>
-            <?= htmlspecialchars($owner['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-        </p>
-        <p><b>Email:</b>
-            <?= htmlspecialchars($owner['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-        </p>
+        <div class="sidebar" style="max-width:520px;">
+            <p><b>Name:</b>
+                <?= htmlspecialchars($owner['display_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+            </p>
+            <p><b>Username:</b>
+                <?= htmlspecialchars($owner['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+            </p>
+            <p><b>Email:</b>
+                <?= htmlspecialchars($owner['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+            </p>
+        </div>
     </div>
 </body>
 

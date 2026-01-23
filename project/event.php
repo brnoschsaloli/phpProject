@@ -1,13 +1,19 @@
 <!-- this file is created by Breno Oliveira -->
 <?php
 
-require_once "auth.php";
+require_once "auth.php"; // user login check
 
+/* ---------------------------
+        DB CONNECTION
+--------------------------- */
 $dbUser = 'breno';
 $dbPassword = 'gator-zoe-PIONEER-cramped';
 $database = $dbUser . "_db";
 $mydb = mysqli_connect('localhost', $dbUser, $dbPassword, $database) or die("DB error");
 
+/* ----------------------------------
+    GET EVENT ID, DATE, EDIT BOOL
+---------------------------------- */
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $m = $_GET['m'] ?? '';
 $y = $_GET['y'] ?? '';
@@ -16,12 +22,14 @@ $edit = isset($_GET['edit']) && $_GET['edit'] == '1';
 if ($id <= 0) {
     die("Invalid event id.");
 }
-
+// back to calendar
 $back = "main.php";
 if ($m !== '' && $y !== '') {
     $back .= "?m=" . urlencode($m) . "&y=" . urlencode($y);
 }
-
+/* ----------------------------------
+            GET CATEGORIES
+---------------------------------- */
 $categories = [];
 //category not equal ''
 $catRes = $mydb->query("
@@ -37,9 +45,9 @@ if ($catRes) {
 }
 
 
-/* ---------------------------
-        USEFUL FUNCTIONS
---------------------------- */
+/* ------------------------------------
+    FUNCTION TO MAKE LINKS w AI help
+------------------------------------ */
 function makeClickableLinks($text)
 {
     // escape HTML first
@@ -56,9 +64,9 @@ function makeClickableLinks($text)
 }
 
 
-/* ---------------------------
-        DELETE (POST)
---------------------------- */
+/* ----------------------------------
+            DELETE (POST)
+---------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
     $stmt = $mydb->prepare("DELETE FROM calendarTable WHERE event_id = ?");
     $stmt->bind_param("i", $id);
@@ -68,9 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
     exit;
 }
 
-/* ---------------------------
-        UPDATE (POST)
---------------------------- */
+/* ----------------------------------
+            UPDATE (POST)
+---------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 
     $event_name = trim($_POST['event_name'] ?? '');
@@ -105,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     }
 }
 
-/* ---------------------------
-        LOAD EVENT (GET)
---------------------------- */
+/* ----------------------------------
+            LOAD EVENT (GET)
+---------------------------------- */
 $stmt = $mydb->prepare("
     SELECT event_id, event_name, `date`, date_time, category, description
     FROM calendarTable
@@ -124,6 +132,7 @@ if (!$event) {
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -132,38 +141,7 @@ if (!$event) {
     <title>Event Details</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .wrap {
-            max-width: 520px;
-        }
-
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 14px;
-            margin-top: 10px;
-        }
-
-        .row {
-            margin: 8px 0;
-        }
-
-        .label {
-            font-weight: bold;
-            display: inline-block;
-            width: 110px;
-        }
-
-        .desc {
-            white-space: pre-wrap;
-            margin-top: 6px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
+        /* overwrite styles.css */
         .btn {
             padding: 8px 12px;
             border-radius: 8px;
@@ -203,7 +181,7 @@ if (!$event) {
         <div class="wrap">
             <a href="<?= htmlspecialchars($back, ENT_QUOTES, 'UTF-8') ?>">← Back to calendar</a>
 
-            <?php if (!$edit): ?>
+            <?php if (!$edit): // view mode ?>
                 <h2><?= htmlspecialchars($event['event_name'], ENT_QUOTES, 'UTF-8') ?></h2>
 
                 <div class="card">
@@ -235,7 +213,7 @@ if (!$event) {
                     </div>
                 </div>
 
-            <?php else: ?>
+            <?php else: // edit mode ?>
                 <h2>Update event</h2>
 
                 <?php if (!empty($errorMsg)): ?>
@@ -265,22 +243,18 @@ if (!$event) {
                             value="<?= $event['date_time'] ? htmlspecialchars(substr($event['date_time'], 0, 5), ENT_QUOTES, 'UTF-8') : '' ?>">
                     </div>
 
+                    <datalist id="categoryList">
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
+                        <?php endforeach; ?>
+                    </datalist>
+
                     <div class="row">
                         <label class="label" for="category">Category:</label><br>
                         <input id="category" name="category"
-                            value="<?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?>" required>
+                            value="<?= htmlspecialchars($event['category'], ENT_QUOTES, 'UTF-8') ?>" list="categoryList"
+                            required>
                     </div>
-
-                    <!-- <label for="category">Category</label><br>
-                <input type="text" id="category" name="category" list="categoryList" required placeholder="Start typing..."
-                    style="width:100%;">
-
-                <datalist id="categoryList">
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
-                    <?php endforeach; ?>
-                </datalist>
-                <br><br> -->
 
                     <div class="row">
                         <label class="label" for="description">Description:</label><br>

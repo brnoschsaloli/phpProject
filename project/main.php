@@ -117,9 +117,9 @@ $todayDate = sprintf('%04d-%02d-%02d', $todayY, $todayM, $todayD);
 
 $todayEvents = [];
 $stmtToday = $mydb->prepare("
-  SELECT event_id, event_name, `date`, date_time, category
+  SELECT event_id, event_name, date, date_time, category
   FROM calendarTable
-  WHERE `date` = ?
+  WHERE date = ?
   ORDER BY date_time ASC
 ");
 $stmtToday->bind_param("s", $todayDate);
@@ -136,20 +136,21 @@ $start = sprintf('%04d-%02d-01', $year, $month);
 $endTs = mktime(0, 0, 0, $month + 1, 1, $year); // first day of next month
 $end = date('Y-m-d', $endTs);
 
+//dynamic query based on the search and category filters
 $query = "
-  SELECT event_id, event_name, `date`, date_time, category, description
+  SELECT event_id, event_name, date, date_time, category, description
   FROM calendarTable
-  WHERE `date` >= ? AND `date` < ?
+  WHERE date >= ? AND date < ?
 ";
 
 $params = [$start, $end];
 $types = "ss";
 
-// category filter
+// category filter made w AI help
 if (count($selectedCats) > 0) {
-  $placeholders = implode(',', array_fill(0, count($selectedCats), '?'));
+  $placeholders = implode(',', array_fill(0, count($selectedCats), '?')); // create "?, ?, ?" dynamic w the number of categories
   $query .= " AND category IN ($placeholders)";
-  $types .= str_repeat("s", count($selectedCats));
+  $types .= str_repeat("s", count($selectedCats)); // create "ssss" dynamic w the number of categories
   foreach ($selectedCats as $c)
     $params[] = $c;
 }
@@ -161,7 +162,7 @@ if ($search !== '') {
   $params[] = "%" . $search . "%";
 }
 
-$query .= " ORDER BY `date` ASC, date_time ASC";
+$query .= " ORDER BY date ASC, date_time ASC";
 
 $stmt = $mydb->prepare($query);
 $stmt->bind_param($types, ...$params); // ...$params is the same as $params[0], $params[1], ...
