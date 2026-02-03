@@ -146,7 +146,12 @@ $query = "
 $params = [$start, $end];
 $types = "ss";
 
-// category filter made w AI help
+/* ------------------------------------
+START of code generated with help by CHATGPT-5.2 AUTO in response to the prompts:
+"How can i do a dynamic query in php to a mysql database"
+"What does "..." mean in the code you provided"
+------------------------------------ */
+
 if (count($selectedCats) > 0) {
   $placeholders = implode(',', array_fill(0, count($selectedCats), '?')); // create "?, ?, ?" dynamic w the number of categories
   $query .= " AND category IN ($placeholders)";
@@ -167,6 +172,12 @@ $query .= " ORDER BY date ASC, date_time ASC";
 $stmt = $mydb->prepare($query);
 $stmt->bind_param($types, ...$params); // ...$params is the same as $params[0], $params[1], ...
 $ok = $stmt->execute();
+
+/* ------------------------------------
+END of code generated with help by CHATGPT-5.2 AUTO in response to the prompts:
+"How can i do a dynamic query in php to a mysql database"
+"What does "..." mean in the code you provided"
+------------------------------------ */
 
 if ($ok) {
   $eventsByDay = [];
